@@ -4,8 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { UserProvider } from './contexts/user.context';
 import { ProductsProvider } from './contexts/products.context';
-import { ItemCountProvider } from './contexts/item-count.context';
-import { ToggleDropdownProvider } from './contexts/toggle-dropdown.context';
+import { CartProvider } from './contexts/cart.context';
 
 import './index.scss';
 import App from './App';
@@ -16,11 +15,9 @@ ReactDOM.render(
     <BrowserRouter>
       <UserProvider>
         <ProductsProvider>
-          <ItemCountProvider>
-            <ToggleDropdownProvider>
+            <CartProvider>
               <App />
-            </ToggleDropdownProvider>
-          </ItemCountProvider>
+            </CartProvider>
         </ProductsProvider>
       </UserProvider>
     </BrowserRouter>
