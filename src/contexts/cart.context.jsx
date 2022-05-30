@@ -17,66 +17,28 @@ if(existingCartItem) {
 return [...cartItems, { ...productToAdd, quantity: 1 }]
 };
 
-const addItemQuantity = (cartItems, itemId) => {
-// find if cartitems contains item id
-const existingCartItem = cartItems.find(
-    (cartItem) => cartItem.id === itemId
-);
 
-// if found, increment quantity
-if(existingCartItem) {
-    return cartItems.map((cartItem) =>
-    cartItem.id === itemId ? { ...cartItem, quantity: cartItem.quantity + 1 }
-    : cartItem
-    );
-}
-// return new array with modified cartItems/ new cart item
-return [...cartItems];
-};
+const subtractItemQuantity = (cartItems, itemToSubtract) => {
+         // find if cartitems contains item
+         const existingCartItem = cartItems.find(
+            (cartItem) => cartItem.id === itemToSubtract.id
+        );
+        
+        // if found and cart item quantity is 1, filter it out
+        if(existingCartItem.quantity === 1) {
+           return cartItems.filter(cartItem => cartItem.id !== itemToSubtract.id);
+        }
 
-const subtractItemQuantity = (cartItems, itemId) => {
-    // find if cartitems contains item id
-    const existingCartItem = cartItems.find(
-        (cartItem) => cartItem.id === itemId
-    );
-    
-    // if found, decrement quantity
-    if(existingCartItem && (existingCartItem.quantity >= 1)) {
+        //else decrement cart item quantity by 1
         return cartItems.map((cartItem) =>
-        cartItem.id === itemId ? { ...cartItem, quantity: cartItem.quantity - 1 }
+        cartItem.id === itemToSubtract.id ? { ...cartItem, quantity: cartItem.quantity - 1 }
         : cartItem
         );
-    }
-    removeItem(cartItems, itemId);
-    // return new array with modified quantity
-    return [...cartItems];
     };
 
-    const removeItem = (cartItems, itemId) => {
-         // find if cartitems contains item
-    const existingCartItem = cartItems.find(
-        (cartItem) => cartItem.id === itemId
-    );
-    
-    // if found, remove cart item
-    if(existingCartItem) {
-       // return cartItems.filter(cartItem => cartItem !== itemId);
-        cartItems.map((cartItem, index) => {
-        if(cartItem.id === itemId){
-            return cartItems.splice(index, 1);
-        }
-           return cartItem;
-    });
-
-    }
-    /*return cartItems.map((cartItem) =>
-    cartItem.id === itemId ? { ...cartItem, quantity: cartItem.quantity - 1 }
-    : cartItem
-    );*/
-    // return new array with modified cart items
-    return [...cartItems];
-
-};
+    const removeItem = (cartItems, itemToRemove) => {
+        return cartItems.filter(cartItem => cartItem.id !== itemToRemove.id);
+    };
 
 
 
@@ -86,6 +48,8 @@ export const CartContext = createContext({
     setIsCartOpen : () => {},
     cartItems: [],
     addItemToCart: () => {},
+    subtractItemQuantity: () => {},
+    removeCheckoutItem: () => {},
     cartCount: 0,
     totalCost: 0
     
@@ -113,20 +77,16 @@ export const  CartProvider = ({children}) => {
     const addItemToCart = (productToAdd) => {
         setCartItems(addCartItem(cartItems, productToAdd)); 
     }
-
-    const addItemCheckoutQuant = (itemId) => {
-        setCartItems(addItemQuantity(cartItems, itemId)); 
+    
+    const subtractCheckoutItemQuantity = (itemToSubtractFrom) =>{
+        setCartItems(subtractItemQuantity(cartItems, itemToSubtractFrom));
     }
     
-    const reduceItemCheckoutQuant = (itemId) =>{
-        setCartItems(subtractItemQuantity(cartItems, itemId));
+    const removeCheckoutItem = (itemToRemove) =>{
+         setCartItems(removeItem(cartItems, itemToRemove)); 
     }
     
-    const removeCheckoutItem = (itemId) =>{
-        setCartItems(removeItem(cartItems, itemId)); 
-    }
-    
-    const value = {isCartOpen, setIsCartOpen, addItemToCart, cartItems, cartCount, addItemCheckoutQuant, reduceItemCheckoutQuant, removeCheckoutItem, totalCost};
+    const value = {isCartOpen, setIsCartOpen, addItemToCart, cartItems, cartCount, subtractCheckoutItemQuantity, removeCheckoutItem, totalCost};
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }
